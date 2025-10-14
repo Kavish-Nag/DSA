@@ -1,4 +1,3 @@
-````
 # 🧩 Sorting Algorithms in C
 
 This folder contains the implementations of **six classic sorting algorithms** in C — covering both **basic** and **advanced** approaches.  
