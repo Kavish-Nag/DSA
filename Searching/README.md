@@ -5,14 +5,6 @@ It allows users to input a list of elements and interactively choose which searc
 
 ---
 
-## 📂 File Overview
-
-| File Name | Description |
-|------------|-------------|
-| **`Search.c`** | Contains implementations of **Linear Search** and **Binary Search**, along with a menu-driven main function for user interaction. |
-
----
-
 ## ⚙️ Algorithms Covered
 
 ### 🔹 1. Linear Search
