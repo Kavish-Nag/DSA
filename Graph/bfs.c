@@ -3,89 +3,96 @@
 
 #define MAX 100
 
-int queue[MAX], front = -1, rear = -1;
-int visited[MAX];
-int graph[MAX][MAX];
-int n;  // make n global and assign in main
-
-void enqueue(int vertex)
-{
-    if (rear == MAX - 1) {
-        printf("Queue is full\n");
-    } else {
-        if (front == -1) front = 0;
-        rear++;
-        queue[rear] = vertex;
-    }
-}
-
-int dequeue()
-{
+struct Node {
     int vertex;
-   
-    if (front == -1) {
-        printf("Queue is empty\n");
+    struct Node* next;
+};
+
+struct Node* adjList[MAX];
+int visited[MAX];
+int queue[MAX];
+int front = -1, rear = -1;
+int n;
+
+struct Node* createNode(int v) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->vertex = v;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void addEdge(int src, int dest) {
+    // Add src -> dest
+    struct Node* newNode = createNode(dest);
+    newNode->next = adjList[src];
+    adjList[src] = newNode;
+
+    // Add dest -> src (for undirected graph)
+    newNode = createNode(src);
+    newNode->next = adjList[dest];
+    adjList[dest] = newNode;
+}
+
+void enqueue(int value) {
+    if (rear == MAX - 1)
+        printf("Queue full\n");
+    else {
+        if (front == -1) front = 0;
+        queue[++rear] = value;
+    }
+}
+
+int dequeue() {
+    int item;
+    if (front == -1)
         return -1;
-    } else {
-        vertex = queue[front];
-        front++;
-       
-        if (front > rear) front = rear = -1;
-    }
-    return vertex;
+    item = queue[front++];
+    if (front > rear) front = rear = -1;
+    return item;
 }
 
-void bfs(int start)
-{
-    enqueue(start);
-    visited[start] = 1;
-   
+void BFS(int startVertex) {
+    visited[startVertex] = 1;
+    enqueue(startVertex);
+
     while (front != -1) {
-        int i;
-        int current = dequeue();
-        printf("%d ", current);
-       
-        for (i = 0; i < n; i++) {
-            if (graph[current][i] == 1 && !visited[i]) {
-                enqueue(i);
-                visited[i] = 1;
+        int currentVertex = dequeue();
+        printf("%d ", currentVertex);
+
+        struct Node* temp = adjList[currentVertex];
+        while (temp) {
+            int adjVertex = temp->vertex;
+            if (!visited[adjVertex]) {
+                visited[adjVertex] = 1;
+                enqueue(adjVertex);
             }
+            temp = temp->next;
         }
     }
-    printf("\n");
 }
 
-int main()
-{
-    int edges, src, dest, i;
-   
-    printf("Enter number of vertices - ");
+int main() {
+    int edges, src, dest;
+
+    printf("Enter number of vertices: ");
     scanf("%d", &n);
-   
-    // Initialize graph and visited arrays to zero
-    for (i = 0; i < n; i++) {
-        visited[i] = 0;
-        for (int j = 0; j < n; j++) {
-            graph[i][j] = 0;
-        }
-    }
-   
-    printf("Enter number of edges - ");
+
+    printf("Enter number of edges: ");
     scanf("%d", &edges);
-   
-    for (i = 0; i < edges; i++) {
-        printf("Enter edge (src dest) - ");
-        scanf("%d %d", &src, &dest);
-        if (src >= 0 && src < n && dest >= 0 && dest < n) {
-            graph[src][dest] = graph[dest][src] = 1;
-        } else {
-            printf("Invalid edge! Try again.\n");
-            i--;  // retry this iteration
-        }
+
+    for (int i = 0; i < n; i++) {
+        adjList[i] = NULL;
+        visited[i] = 0;
     }
-   
-    printf("BFS starting from vertex 0:\n");
-    bfs(0);
-   
+
+    for (int i = 0; i < edges; i++) {
+        printf("Enter edge (src dest): ");
+        scanf("%d %d", &src, &dest);
+        addEdge(src, dest);
+    }
+
+    printf("BFS traversal starting from vertex 0:\n");
+    BFS(0);
+
     return 0;
 }
