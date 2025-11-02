@@ -10,6 +10,10 @@ struct Node {
 // Create a new node with given data
 struct Node* createNode(int data) {
     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        printf("Memory allocation failed!\n");
+        exit(1);
+    }
     newNode->data = data;
     newNode->next = NULL;
     return newNode;
@@ -61,7 +65,7 @@ void deleteEdge(struct Node* adj[], int src, int dest) {
     }
 }
 
-//Delete a vertex and all its edges (calls deleteEdge)
+// Delete a vertex and all its edges
 void deleteNode(struct Node* adj[], int V, int vertex) {
     if (vertex < 0 || vertex >= V) {
         printf("Invalid vertex! Please enter a value between 0 and %d.\n", V - 1);
@@ -82,8 +86,6 @@ void deleteNode(struct Node* adj[], int V, int vertex) {
 // Display the adjacency list of the graph
 void displayAdjList(struct Node* adj[], int V) {
     printf("\nAdjacency List:\n");
-        printf("Memory allocation failed!\n");
-        return 1;
     for (int i = 0; i < V; i++) {
         printf("%d: ", i);
         struct Node* temp = adj[i];
@@ -102,6 +104,8 @@ int main() {
 
     struct Node** adj = (struct Node**)malloc(V * sizeof(struct Node*));
     if (adj == NULL) {
+        printf("Memory allocation failed!\n");
+        return 1;
     }
 
     for (int i = 0; i < V; i++) {
@@ -146,10 +150,21 @@ int main() {
                 break;
 
             default:
-                printf("Invalid choice! Please enter a number between 1 and 5.\n");
+                printf("Invalid choice! Please enter a number between 1 and 4.\n");
                 break;
         }
     } while (choice != 4);
+
+    // Free memory
+    for (int i = 0; i < V; i++) {
+        struct Node* temp = adj[i];
+        while (temp != NULL) {
+            struct Node* next = temp->next;
+            free(temp);
+            temp = next;
+        }
+    }
+    free(adj);
 
     return 0;
 }
